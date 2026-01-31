@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gurukul App</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Yatra+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        /* === 🎨 COLORS === */
+        :root { --primary: #880e4f; --primary-light: #c2185b; --accent: #ffc107; --bg: #f5f5f5; --text: #333; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; user-select: none; }
+
+        /* === 🖼️ LOGO STYLE === */
+        .logo-title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .school-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid var(--accent);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            object-fit: cover;
+            background: white;
+            padding: 2px;
+        }
+        /* Header alignment */
+        .header .logo-title-container { justify-content: flex-start; gap: 10px; margin-bottom: 5px; }
+        .header .school-logo { width: 50px; height: 50px; border: 2px solid var(--accent); }
+
+        /* === TITLES === */
+        .tiranga-text { 
+            font-family: 'Yatra One', cursive; 
+            font-size: 28px; margin: 0; letter-spacing: 1px; line-height: 1.2;
+            background: linear-gradient(180deg, #FF9933 0%, #333 50%, #138808 100%); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: left; 
+        }
+        .english-title { 
+            font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 700; margin: 0; 
+            letter-spacing: 0.5px; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3); line-height: 1.2; 
+        }
+        .welcome-text { color: var(--accent); font-size: 14px; font-weight: 600; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* === 🔐 LOGIN STYLE === */
+        #loginPage { background: linear-gradient(135deg, var(--primary), var(--primary-light)); height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; padding: 20px; position: fixed; top: 0; left: 0; z-index: 2000; }
+        .login-container { background: white; border-radius: 25px; padding: 30px 20px; width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; }
+        .school-name p { color: #666; font-size: 13px; margin-bottom: 30px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+        .user-type { display: flex; margin-bottom: 25px; border-radius: 15px; overflow: hidden; border: 2px solid var(--primary); }
+        .user-type-btn { flex: 1; padding: 15px; border: none; background: #f0f0f0; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .user-type-btn.active { background: var(--primary); color: white; }
+        .login-form { display: none; text-align: left; animation: fadeIn 0.4s; }
+        .login-form.active { display: block; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+        .form-group input { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 16px; outline: none; }
+        .login-btn { width: 100%; padding: 15px; background: linear-gradient(to right, var(--primary), var(--primary-light)); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: transform 0.2s; }
+        .login-btn:active { transform: scale(0.95); }
+
+        /* === 📱 APP DASHBOARD === */
+        #appPage { display: none; min-height: 100vh; padding-bottom: 90px; }
+        .header { background: linear-gradient(135deg, var(--primary), var(--primary-light)); padding: 25px 20px 50px 20px; border-radius: 0 0 30px 30px; color: white; box-shadow: 0 10px 20px rgba(136,14,79,0.3); position: relative; margin-bottom: 15px; }
+        .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        
+        .menu-container { position: absolute; top: 20px; right: 20px; }
+        .menu-btn { color: white; font-size: 30px; cursor: pointer; }
+        .dropdown-menu { display: none; position: absolute; right: 0; top: 40px; background: white; width: 220px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); overflow: hidden; z-index: 3000; animation: slideIn 0.2s; }
+        .social-row { display: flex; justify-content: space-around; padding: 15px 10px; background: #fff8e1; border-bottom: 1px solid #eee; }
+        .social-icon { font-size: 24px; }
+        .fa-whatsapp { color: #25D366; } .fa-instagram { color: #E1306C; } .fa-telegram { color: #0088cc; } .fa-youtube { color: #FF0000; }
+        .menu-option { padding: 12px 15px; display: flex; align-items: center; gap: 10px; color: #333; font-size: 14px; font-weight: 500; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+        
+        .user-info { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; margin-top: 10px; }
+        .user-type-badge { background: var(--accent); color: #333; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .profile-pic { width: 45px; height: 45px; background: white; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: bold; font-size: 20px; }
+
+        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 0 20px; }
+        .menu-item { background: white; padding: 15px 5px; border-radius: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.2s ease; }
+        .menu-item:active { transform: scale(0.95); background: #fffde7; }
+        .menu-item i { font-size: 32px; color: var(--primary); margin-bottom: 8px; display: block; }
+        .menu-item span { font-size: 11px; font-weight: 600; color: #555; display: block; }
+        .menu-item i.gold { color: #ffb300; } .menu-item i.green { color: #2e7d32; }
+        .teacher-only { display: none; border: 2px dashed var(--accent); background: #fff8e1; }
+        .teacher-only.visible { display: block; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); border-top-left-radius: 25px; border-top-right-radius: 25px; z-index: 100; }
+        .nav-btn { border: none; background: none; color: #aaa; font-size: 10px; display: flex; flex-direction: column; align-items: center; }
+        .nav-btn.active { color: var(--primary); font-weight: bold; }
+
+        /* === MODALS === */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 5000; justify-content: center; align-items: center; animation: fadeIn 0.3s; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; }
+        .close-icon { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #999; cursor: pointer; }
+        .big-profile-pic { width: 80px; height: 80px; background: var(--bg); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 35px; color: var(--primary); border: 3px solid var(--accent); }
+        .profile-tag { background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; display: inline-block; margin-top: 10px; }
+        .ai-input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; margin-bottom: 15px; }
+        .ai-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 10px; width: 100%; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage">
+        <div class="login-container">
+            <div class="school-name">
+                <div class="logo-title-container">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2942/2942544.png" alt="Logo" class="school-logo">
+                    <h1 class="tiranga-text">गुरुकुल स्कूल<br>धनकोली</h1>
+                </div>
+                <p>Knowledge • Discipline • Success</p>
+            </div>
+            <div class="user-type">
+                <button class="user-type-btn active" id="studentBtn" onclick="showLogin('student')"><i class="material-icons" style="vertical-align: middle;">person</i> छात्र</button>
+                <button class="user-type-btn" id="teacherBtn" onclick="showLogin('teacher')"><i class="material-icons" style="vertical-align: middle;">school</i> शिक्षक</button>
+            </div>
+            <form id="studentLogin" class="login-form active" onsubmit="return false;">
+                <div class="form-group"><label>Roll Number</label><input type="number" id="studentRoll" placeholder="Ex: 202601"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="studentPass" placeholder="Enter Password"></div>
+                <button class="login-btn" onclick="loginUser('student')">Login as Student</button>
+            </form>
+            <form id="teacherLogin" class="login-form" onsubmit="return false;">
+                <div class="form-group"><label>Teacher ID</label><input type="text" id="teacherId" placeholder="Ex: GURU01"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="teacherPass" placeholder="Enter Password"></div>
+                <button class="login-btn" onclick="loginUser('teacher')">Login as Teacher</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="appPage">
+        <div class="header">
+            <div class="menu-container">
+                <i class="material-icons menu-btn" onclick="toggleMenu()">more_vert</i>
+                <div id="dropdownMenu" class="dropdown-menu">
+                    <div class="social-row">
+                        <a href="https://whatsapp.com/channel/0029Vb6qqNx5PO0tC5RMGq0p"><i class="fab fa-whatsapp social-icon"></i></a>
+                        <a href="https://www.instagram.com/gurukul_school_dhankoli?igsh=cmR3MXExcDN5a2Jv"><i class="fab fa-instagram social-icon"></i></a>
+                        <a href="https://t.me/+ES12goFlHcphNjg1"><i class="fab fa-telegram social-icon"></i></a>
+                        <a href="https://youtube.com/@g.s.s.s.dhankholi?si=94Z8MKqghn4E-s4A"><i class="fab fa-youtube social-icon"></i></a>
+                    </div>
+                    <div class="menu-option" onclick="openAiModal()"><i class="material-icons" style="color:#673ab7;">psychology</i> Ask AI (Doubt)</div>
+                    <div class="menu-option" onclick="openProfileModal()"><i class="material-icons">person</i> My Profile</div>
+                    <div class="menu-option" style="color:red;" onclick="logout()"><i class="material-icons" style="color:red;">logout</i> Logout</div>
+                </div>
+            </div>
+            <div class="header-top">
+                <div style="margin-top: 15px;">
+                    <div class="logo-title-container">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2942/2942544.png" alt="Logo" class="school-logo">
+                        <h1 class="english-title">Gurukul School<br>Dhankoli</h1>
+                    </div>
+                    <p class="welcome-text">WELCOME</p>
+                </div>
+                <div class="user-info"><div class="user-type-badge" id="userBadge">Student</div><div class="profile-pic" id="userAvatar">S</div></div>
+            </div>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-item" onclick="openFeature('Attendance')"> <i class="material-icons green">how_to_reg</i> <span>Attendance</span> </div>
+            <div class="menu-item" onclick="openFeature('Homework')"> <i class="material-icons gold">auto_stories</i> <span>Homework</span> </div>
+            <div class="menu-item" onclick="openFeature('Time Table')"> <i class="material-icons">calendar_today</i> <span>Time Table</span> </div>
+            <div class="menu-item" onclick="openFeature('Result')"> <i class="material-icons">emoji_events</i> <span>Result</span> </div>
+            <div class="menu-item teacher-only" onclick="openFeature('Mark Attendance')"> <i class="material-icons">edit_square</i> <span>Mark Attd.</span> </div>
+            <div class="menu-item teacher-only" onclick="openFeature('Upload Result')"> <i class="material-icons">upload_file</i> <span>Upload Result</span> </div>
+            <div class="menu-item" onclick="openFeature('Live Class')"> <i class="material-icons" style="color:red;">videocam</i> <span>Live Class</span> </div>
+            <div class="menu-item" onclick="openFeature('Syllabus')"> <i class="material-icons">menu_book</i> <span>Syllabus</span> </div>
+            <div class="menu-item" onclick="openFeature('Fees')"> <i class="material-icons">account_balance_wallet</i> <span>Pay Fees</span> </div>
+            <div class="menu-item" onclick="openFeature('Gallery')"> <i class="material-icons">collections</i> <span>Gallery</span> </div>
+            <div class="menu-item" onclick="openFeature('Support')"> <i class="material-icons">support_agent</i> <span>Help</span> </div>
+        </div>
+        
+        <div class="bottom-nav">
+            <button class="nav-btn active"> <i class="material-icons">home</i> <span>Home</span> </button>
+            <button class="nav-btn" onclick="openAiModal()"> <i class="material-icons">psychology</i> <span>Doubt</span> </button>
+            <button class="nav-btn" onclick="openProfileModal()"> <i class="material-icons">person</i> <span>Profile</span> </button>
+        </div>
+    </div>
+
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close-icon" onclick="closeProfileModal()">&times;</span>
+            <div class="big-profile-pic" id="pPic">S</div>
+            <div class="profile-details">
+                <h2 id="pName">Student Name</h2>
+                <p id="pId">Roll No: 202601</p>
+                <p>Class: 12th Science</p>
+                <div class="profile-tag" id="pTag">STUDENT</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="aiModal" class="modal">
+        <div class="modal-content">
+            <span class="close-icon" onclick="closeAiModal()">&times;</span>
+            <h2>🤖 AI Doubt Solver</h2>
+            <textarea id="doubtInput" class="ai-input" rows="3" placeholder="Type your doubt here..."></textarea>
+            <button class="ai-btn" onclick="askAI()">Search Doubt 🚀</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = 'student';
+        
+        function loginUser(type) {
+            let id = (type==='student')? document.getElementById('studentRoll').value : document.getElementById('teacherId').value;
+            let pass = (type==='student')? document.getElementById('studentPass').value : document.getElementById('teacherPass').value;
+            if (!id || !pass) { alert("Please enter ID & Password"); return; }
+            
+            currentUser = type;
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('appPage').style.display = 'block';
+            
+            const isTeacher = (type === 'teacher');
+            document.getElementById('userBadge').innerText = isTeacher ? "Teacher" : "Student";
+            document.getElementById('userBadge').style.background = isTeacher ? "#ff9800" : "#ffc107";
+            document.getElementById('userAvatar').innerText = isTeacher ? "T" : "S";
+            
+            document.querySelectorAll('.teacher-only').forEach(el => {
+                if(isTeacher) el.classList.add('visible');
+                else el.classList.remove('visible');
+            });
+
+            // 🎉 CONFETTI ANIMATION 🎉
+            var duration = 3 * 1000; var animationEnd = Date.now() + duration; var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now(); if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        function showLogin(type) {
+            document.querySelectorAll('.login-form').forEach(f => f.classList.remove('active'));
+            document.querySelectorAll('.user-type-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(type + 'Btn').classList.add('active');
+            document.getElementById(type + 'Login').classList.add('active');
+        }
+        function toggleMenu() { document.getElementById("dropdownMenu").style.display = (document.getElementById("dropdownMenu").style.display === "block") ? "none" : "block"; }
+        window.onclick = function(e) { if (!e.target.matches('.menu-btn')) { document.getElementById("dropdownMenu").style.display = "none"; } }
+        function openAiModal() { document.getElementById("aiModal").style.display = "flex"; }
+        function closeAiModal() { document.getElementById("aiModal").style.display = "none"; }
+        function openProfileModal() { 
+            document.getElementById("pName").innerText = (currentUser === 'teacher') ? "Gurukul Teacher" : "Rahul Kumar";
+            document.getElementById("pId").innerText = (currentUser === 'teacher') ? "ID: GURU01" : "Roll No: 202601";
+            document.getElementById("pTag").innerText = (currentUser === 'teacher') ? "TEACHER" : "STUDENT";
+            document.getElementById("pPic").innerText = (currentUser === 'teacher') ? "T" : "S";
+            document.getElementById("profileModal").style.display = "flex"; 
+        }
+        function closeProfileModal() { document.getElementById("profileModal").style.display = "none"; }
+        function askAI() { var q = document.getElementById("doubtInput").value; if(q) window.open("https://www.google.com/search?q=" + q, "_blank"); closeAiModal(); }
+        function logout() { if(confirm("Logout?")) location.reload(); }
+        function openFeature(name) {
+            var links = { 'Live Class': 'https://youtube.com/@g.s.s.s.dhankholi?si=94Z8MKqghn4E-s4A', 'Support': 'https://wa.me/919772564359', 'About': 'about.html' };
+            if (links[name]) window.location.href = links[name]; else alert("🚧 " + name + " Coming Soon!");
+        }
+    </script>
+</body>
+</html>
